@@ -1,0 +1,276 @@
+<html>
+	<head>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fuggles&family=Indie+Flower&family=Yomogi&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+
+		<style>
+		div#heading{
+			font-family: 'Yomogi', cursive;
+			font-size: 40px;
+		}
+
+		div#para{
+			font-family: 'Indie Flower', cursive;
+			font-size: 30px;
+		}
+
+		div#para2{
+			font-family: 'Fuggles', cursive;
+			font-size: 35px;
+		}
+
+		div#para3{
+			font-family: 'Shadows Into Light', cursive;
+			font-size: 30px;
+		}
+
+		p{
+			text-align: center;
+		}
+		</style>	
+	</head>
+
+	<body>
+		<div id='heading'>
+			<p>Post on Facebook Groups using Selenium</p>
+		</div>
+
+
+		<div id='para'>
+			<p>Posting on Facebook is easy, log in to your account, and post. But what if you wish to automate the whole process? Well, there is the Facebook API, details of which are <a href='https://facebook-sdk.readthedocs.io/en/latest/api.html'>here</a>. While, using the API allows you to post from your account, but what if you want to post using your page?
+			We use Selenium in that case! From logging in to navigating to the designated page and posting on groups in case of Facebook.</p>
+		</div>
+
+		<div id='para2'>
+			<p><b>So. let's get started!</b></p>
+		</div>
+
+
+		<div id='para'>
+			<p>First, let's worry about the imports! So, import the necessary libraries using the following code.</p>
+		</div>
+
+		<div style="background: #f0f3f3; overflow:auto;width:auto;border: #ffe6e6;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #006699; font-weight: bold">from</span> <span style="color: #00CCFF; font-weight: bold">selenium</span> <span style="color: #006699; font-weight: bold">import</span> webdriver
+<span style="color: #006699; font-weight: bold">from</span> <span style="color: #00CCFF; font-weight: bold">webdriver_manager.chrome</span> <span style="color: #006699; font-weight: bold">import</span> ChromeDriverManager
+<span style="color: #006699; font-weight: bold">from</span> <span style="color: #00CCFF; font-weight: bold">bs4</span> <span style="color: #006699; font-weight: bold">import</span> BeautifulSoup
+<span style="color: #006699; font-weight: bold">import</span> <span style="color: #00CCFF; font-weight: bold">re</span>
+<span style="color: #006699; font-weight: bold">import</span> <span style="color: #00CCFF; font-weight: bold">getpass</span>
+<span style="color: #006699; font-weight: bold">import</span> <span style="color: #00CCFF; font-weight: bold">time</span>
+<span style="color: #006699; font-weight: bold">import</span> <span style="color: #00CCFF; font-weight: bold">sys</span>
+<span style="color: #006699; font-weight: bold">import</span> <span style="color: #00CCFF; font-weight: bold">random</span>
+</pre></div>
+
+
+
+		<div id='para'>
+			<p>Now, that we have imported the necessary libraries, let's design a class for posting on Facebook.</p>
+		</div>
+
+		<div style="background: #f0f3f3; overflow:auto;width:auto;border: #ffe6e6;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #006699; font-weight: bold">class</span> <span style="color: #00AA88; font-weight: bold">FBPost</span>:
+    
+    <span style="color: #006699; font-weight: bold">def</span> <span style="color: #CC00FF">__init__</span>(<span style="color: #336666">self</span>):
+        <span style="color: #336666">self</span><span style="color: #555555">.</span>checkout()
+        linkedin_cred <span style="color: #555555">=</span> <span style="color: #336666">open</span>(<span style="color: #CC3300">&#39;fb_credentials.txt&#39;</span>, <span style="color: #CC3300">&#39;r&#39;</span>)
+        details <span style="color: #555555">=</span> linkedin_cred<span style="color: #555555">.</span>readlines()
+        linkedin_cred<span style="color: #555555">.</span>close()
+        <span style="color: #336666">self</span><span style="color: #555555">.</span>email_ <span style="color: #555555">=</span> details[<span style="color: #FF6600">0</span>]<span style="color: #555555">.</span>strip()
+        <span style="color: #336666">self</span><span style="color: #555555">.</span>pass_ <span style="color: #555555">=</span> details[<span style="color: #FF6600">1</span>]<span style="color: #555555">.</span>strip()
+        
+    
+    <span style="color: #006699; font-weight: bold">def</span> <span style="color: #CC00FF">checkout</span>(<span style="color: #336666">self</span>):
+        <span style="color: #006699; font-weight: bold">try</span>:
+            linkedin_cred <span style="color: #555555">=</span> <span style="color: #336666">open</span>(<span style="color: #CC3300">&#39;fb_credentials.txt&#39;</span>, <span style="color: #CC3300">&#39;r&#39;</span>)
+            linkedin_cred<span style="color: #555555">.</span>close()
+        <span style="color: #006699; font-weight: bold">except</span>:
+            regex <span style="color: #555555">=</span> <span style="color: #CC3300">&#39;^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$&#39;</span>
+            <span style="color: #006699; font-weight: bold">while</span> <span style="color: #006699; font-weight: bold">True</span>:
+                email_ <span style="color: #555555">=</span> <span style="color: #336666">input</span>(<span style="color: #CC3300">&quot;Enter Facebook email ID please : &quot;</span>)
+                <span style="color: #006699; font-weight: bold">if</span> (re<span style="color: #555555">.</span>search(regex, email_)):
+                    <span style="color: #006699; font-weight: bold">break</span>
+                <span style="color: #006699; font-weight: bold">else</span>:
+                    <span style="color: #336666">print</span>(<span style="color: #CC3300">&quot;Enter a valid email please&quot;</span>)
+            pass_ <span style="color: #555555">=</span> getpass<span style="color: #555555">.</span>getpass()
+            
+            linkedin_credw <span style="color: #555555">=</span> <span style="color: #336666">open</span>(<span style="color: #CC3300">&#39;fb_credentials.txt&#39;</span>, <span style="color: #CC3300">&#39;w&#39;</span>)
+            linkedin_credw<span style="color: #555555">.</span>write(email_)
+            linkedin_credw<span style="color: #555555">.</span>write(<span style="color: #CC3300">&#39;</span><span style="color: #CC3300; font-weight: bold">\n</span><span style="color: #CC3300">&#39;</span>)
+            linkedin_credw<span style="color: #555555">.</span>write(pass_)
+            linkedin_credw<span style="color: #555555">.</span>write(<span style="color: #CC3300">&#39;</span><span style="color: #CC3300; font-weight: bold">\n</span><span style="color: #CC3300">&#39;</span>)
+            
+            linkedin_credw<span style="color: #555555">.</span>close()
+</pre></div>
+
+
+		
+		<div id='para2'>
+			<p>What we did here?<br></p>
+		</div>
+
+		<div id='para3'>
+			<p>
+				First, we call the checkout function, where we check if there exists a facebook credentials text file. If it does exist, we go about our task of reading the email ID and password from there, but if it doesn't exist, we ask the user to input their email ID and password. After this, we write it down in the facebook credentials text file, and get back to the initialize function where we read the email ID and password.
+			</p>
+		</div>
+
+
+		<div id='para'>
+			<p>
+				Now, onto the next function to be defined in the FBPost class.
+			</p>
+		</div>
+
+		<div style="background: #f0f3f3; overflow:auto;width:auto;border: #ffe6e6;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #006699; font-weight: bold">def</span> <span style="color: #CC00FF">setup</span>(<span style="color: #336666">self</span>):
+        chrome_options <span style="color: #555555">=</span> webdriver<span style="color: #555555">.</span>ChromeOptions()
+        chrome_options<span style="color: #555555">.</span>add_argument(<span style="color: #CC3300">&#39;--window-size=1036, 674&#39;</span>)  
+        chrome_options<span style="color: #555555">.</span>add_argument(<span style="color: #CC3300">&#39;--headless&#39;</span>)
+        chrome_options<span style="color: #555555">.</span>add_argument(<span style="color: #CC3300">&quot;--log-level=3&quot;</span>)
+        chrome_options<span style="color: #555555">.</span>add_experimental_option(<span style="color: #CC3300">&quot;prefs&quot;</span>, {
+        <span style="color: #CC3300">&quot;profile.default_content_setting_values.notifications&quot;</span>: <span style="color: #FF6600">1</span>
+        })
+        
+        <span style="color: #336666">self</span><span style="color: #555555">.</span>browser <span style="color: #555555">=</span> webdriver<span style="color: #555555">.</span>Chrome(executable_path<span style="color: #555555">=</span>ChromeDriverManager()<span style="color: #555555">.</span>install(), options<span style="color: #555555">=</span>chrome_options, )
+        <span style="color: #336666">self</span><span style="color: #555555">.</span>browser<span style="color: #555555">.</span>get(<span style="color: #CC3300">&#39;https://www.facebook.com/&#39;</span>)
+        
+        time<span style="color: #555555">.</span>sleep(<span style="color: #FF6600">2</span>)
+        email <span style="color: #555555">=</span> <span style="color: #336666">self</span><span style="color: #555555">.</span>browser<span style="color: #555555">.</span>find_element_by_id(<span style="color: #CC3300">&#39;email&#39;</span>)
+        email<span style="color: #555555">.</span>send_keys(<span style="color: #336666">self</span><span style="color: #555555">.</span>email_)
+        
+        time<span style="color: #555555">.</span>sleep(<span style="color: #FF6600">2</span>)
+        password <span style="color: #555555">=</span> <span style="color: #336666">self</span><span style="color: #555555">.</span>browser<span style="color: #555555">.</span>find_element_by_id(<span style="color: #CC3300">&#39;pass&#39;</span>)
+        password<span style="color: #555555">.</span>send_keys(<span style="color: #336666">self</span><span style="color: #555555">.</span>pass_)
+        
+        time<span style="color: #555555">.</span>sleep(<span style="color: #FF6600">2</span>)
+        submit_button <span style="color: #555555">=</span> <span style="color: #336666">self</span><span style="color: #555555">.</span>browser<span style="color: #555555">.</span>find_element_by_name(<span style="color: #CC3300">&#39;login&#39;</span>)
+        submit_button<span style="color: #555555">.</span>click()
+        time<span style="color: #555555">.</span>sleep(<span style="color: #FF6600">2</span>)
+        page_name <span style="color: #555555">=</span> <span style="color: #CC3300">&#39;your page name&#39;</span>
+        <span style="color: #336666">self</span><span style="color: #555555">.</span>browser<span style="color: #555555">.</span>get(<span style="color: #CC3300">&#39;https://www.facebook.com/&#39;</span> <span style="color: #555555">+</span> page_name)
+</pre></div>
+
+
+		
+		<div id='para3'>
+			<p>
+				The function setup will have the flow as follows.
+				<ul>
+					<li>First, we set up the chrome options, like the page size, making the browser headless(to make sure the user doesn't get caught up in the backend works) and not allowing notifications to show up.</li>
+					<li>Next, we create an object of webdriver for chrome.</li>
+					<li>We next navigate to the Email ID field and enter the email ID, and continuing the same for password, after which the login button is clicked</li>
+					<li>Next, we navigate to the page name, because we want to act as the page rather than our personal account.</li>
+				</ul>
+			</p>
+		</div>
+
+
+		<div id='para2'>
+			<p>Moving onto the Function meant for posting on a given group</p>
+		</div>
+
+		<div style="background: #f0f3f3; overflow:auto;width:auto;border: #ffe6e6;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #006699; font-weight: bold">def</span> <span style="color: #CC00FF">post_on_facebook</span>(<span style="color: #336666">self</span>, group_url):
+    
+        <span style="color: #336666">print</span>(<span style="color: #CC3300">&#39;Posting  on Facebook group: &#39;</span>, group_url)
+        
+        
+        
+        time<span style="color: #555555">.</span>sleep(<span style="color: #FF6600">4</span>)
+        <span style="color: #336666">self</span><span style="color: #555555">.</span>browser<span style="color: #555555">.</span>get(group_url)
+        time<span style="color: #555555">.</span>sleep(<span style="color: #FF6600">2</span>)
+        
+        text_to_post <span style="color: #555555">=</span> <span style="color: #CC3300">&#39;The content to post goes here&#39;</span>
+        
+        <span style="color: #006699; font-weight: bold">try</span>:
+            post_class <span style="color: #555555">=</span> <span style="color: #CC3300">&#39;oajrlxb2 b3i9ofy5 qu0x051f esr5mh6w e9989ue4 r7d6kgcz rq0escxv nhd2j8a9 j83agx80 p7hjln8o kvgmc6g5 cxmmr5t8 oygrvhab hcukyx3x cxgpxx05 d1544ag0 sj5x9vvc tw6a2znq i1ao9s8h esuyzwwr f1sip0of lzcic4wl l9j0dhe7 abiwlrkh p8dawk7l bp9cbjyn orhb3f3m czkt41v7 fmqxjp7s emzo65vh btwxx1t3 buofh1pr idiwt2bm jifvfom9 kbf60n1y&#39;</span>
+            post_class <span style="color: #555555">=</span> post_class<span style="color: #555555">.</span>replace(<span style="color: #CC3300">&#39; &#39;</span>, <span style="color: #CC3300">&#39;.&#39;</span>)
+            click_post <span style="color: #555555">=</span> <span style="color: #336666">self</span><span style="color: #555555">.</span>browser<span style="color: #555555">.</span>find_element_by_class_name(post_class)
+            click_post<span style="color: #555555">.</span>click()
+            time<span style="color: #555555">.</span>sleep(<span style="color: #FF6600">5</span>)
+            
+            
+            post_content <span style="color: #555555">=</span> <span style="color: #336666">self</span><span style="color: #555555">.</span>browser<span style="color: #555555">.</span>find_element_by_class_name(<span style="color: #CC3300">&#39;notranslate._5rpu&#39;</span>)
+            post_content <span style="color: #555555">=</span> <span style="color: #336666">self</span><span style="color: #555555">.</span>browser<span style="color: #555555">.</span>switch_to_active_element()
+            post_content<span style="color: #555555">.</span>send_keys(text_to_post)
+            time<span style="color: #555555">.</span>sleep(<span style="color: #FF6600">5</span>)
+            
+            soup <span style="color: #555555">=</span> BeautifulSoup(<span style="color: #336666">self</span><span style="color: #555555">.</span>browser<span style="color: #555555">.</span>page_source, <span style="color: #CC3300">&#39;html.parser&#39;</span>)
+            all_pc <span style="color: #555555">=</span> soup<span style="color: #555555">.</span>find_all(<span style="color: #CC3300">&#39;div&#39;</span>, attrs<span style="color: #555555">=</span>{<span style="color: #CC3300">&#39;id&#39;</span>: re<span style="color: #555555">.</span>compile(<span style="color: #CC3300">&quot;^mount_0_0_&quot;</span>)})
+            id_ <span style="color: #555555">=</span> <span style="color: #336666">str</span>(all_pc[<span style="color: #FF6600">0</span>]<span style="color: #555555">.</span>get(<span style="color: #CC3300">&#39;id&#39;</span>))
+            xpath <span style="color: #555555">=</span> <span style="color: #CC3300">&#39;//*[@id=&quot;&#39;</span> <span style="color: #555555">+</span> id_ <span style="color: #555555">+</span> <span style="color: #CC3300">&#39;&quot;]/div/div[1]/div/div[4]/div/div/div[1]/div/div[2]/div/div/div/div/div[1]/form/div/div[1]/div/div/div[1]/div/div[3]/div[2]/div[1]/div&#39;</span>
+            post <span style="color: #555555">=</span> <span style="color: #336666">self</span><span style="color: #555555">.</span>browser<span style="color: #555555">.</span>find_element_by_xpath(xpath)
+            post<span style="color: #555555">.</span>click()
+            time<span style="color: #555555">.</span>sleep(<span style="color: #FF6600">5</span>)
+            
+        <span style="color: #006699; font-weight: bold">except</span>:
+            
+            
+            <span style="color: #336666">print</span>(<span style="color: #CC3300">&quot;Something went wrong, exiting script to avoid conflicts&quot;</span>)
+            sys<span style="color: #555555">.</span>exit()
+        
+        
+</pre></div>
+
+	
+
+	<div id='para3'>
+		<p>
+			The following happens when the above function is called
+			<ul>
+				<li>First, we navigate to the group url and then we define the text to be posted</li>
+				<li>Now we click on the post button/textbox as that is shown here</li>
+				<li>Next, we click on the text box meant to enter the text we would like to post and send it to the textbox</li>
+				<li>Now, we click on the post button, after which our post is posted.</li>
+				<li>If in any case, something goes wrong, we exit the script entirely to make sure no problems are caused</li>
+		</p>
+	</div>
+
+	<div id='para2'>
+		<p>
+			Now, for the final step, to make sure we don't create a load on the system
+		</p>
+	</div>
+
+	<div style="background: #f0f3f3; overflow:auto;width:auto;border: #ffe6e6;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">    <span style="color: #006699; font-weight: bold">def</span> <span style="color: #CC00FF">close_browser</span>(<span style="color: #336666">self</span>):
+        <span style="color: #336666">self</span><span style="color: #555555">.</span>browser<span style="color: #555555">.</span>close()
+</pre></div>
+
+	
+	<div id='para3'>
+		<p>
+			Here, we closed the browser that we used!
+		</p><br>
+		<p>
+			So, now is the time to call the functions in an appropriate order to make sure everything goes as planned
+		</p>
+	</div>
+
+	<div style="background: #f0f3f3; overflow:auto;width:auto;border: #ffe6e6;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">fb <span style="color: #555555">=</span> FBPost()
+fb<span style="color: #555555">.</span>setup()
+
+groups <span style="color: #555555">=</span> [<span style="color: #CC3300">&#39;your group name 1&#39;</span>, <span style="color: #CC3300">&#39;your group name n&#39;</span>]
+
+<span style="color: #006699; font-weight: bold">for</span> group <span style="color: #000000; font-weight: bold">in</span> groups:
+    group_url <span style="color: #555555">=</span> <span style="color: #CC3300">&#39;https://www.facebook.com/groups/&#39;</span> <span style="color: #555555">+</span> group
+    fb<span style="color: #555555">.</span>post_on_facebook(group_url)
+fb<span style="color: #555555">.</span>close_browser()
+</pre></div>
+
+
+	<div id='para3'>
+		<p style='font-size: 40px;'>
+			And, we are done!
+		</p>
+	</div>
+
+	<div id='para'>
+		<p>
+			The output is in the youtube video below, or you could possibly click <a href='https://youtu.be/t37c1hYagBg'>here</a>.
+		</p>
+		<p>
+			The complete code is available <a href='https://github.com/Ishikashah2510/cppsecrets_articles'>here</a>
+		</p>
+		<p>
+			For any queries, feel free to reach out to me!
+		</p>
+	</div>
+	</body>
+</html>
