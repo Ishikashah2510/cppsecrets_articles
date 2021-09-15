@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Scrape nse data</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat&family=Indie+Flower&family=Poiret+One&family=Rampart+One&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"><style type="text/css">div#heading{
+			font-family: 'Rampart One', cursive;
+			font-size: 40px;
+		}div#para{
+			font-family: 'Indie Flower', cursive;
+			font-size: 30px;
+		}div#para2{
+			font-family: 'Caveat', cursive;
+			font-size: 35px;
+		}div#para3{
+			font-family: 'Poiret One', cursive;
+			font-size: 30px;
+		}p{
+			text-align: center;
+		}</style>
+</head>
+<body><div id="heading"><p>Scrape NSE data using Selenium</p></div>
+<div id="para2"><p>Looking to get data from NSE? As simple as it sounds, simply choose the symbol you want and the expiry date and you are all set!<br>But what happens, when you want to get data for various symbols together? or you wish to get data for varying expiry dates?<br>Pretty tiring, huh? I thought so! So, here I am bringing forward for you the alternative to be able to get this data!</p></div>
+<div id='para'><p>First, let's worry about the imports, we do not want import errors being thrown our way for no reason at all</p><p style="font-size: 20px;">Don't forget to pip install all these imports, quite a neccessity!</p></div>
+	<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">os</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">time</span>
+<span style="color: #008800; font-weight: bold">import</span> <span style="color: #0e84b5; font-weight: bold">pandas</span> <span style="color: #008800; font-weight: bold">as</span> <span style="color: #0e84b5; font-weight: bold">pd</span>
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">selenium</span> <span style="color: #008800; font-weight: bold">import</span> webdriver
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">selenium.webdriver.support.ui</span> <span style="color: #008800; font-weight: bold">import</span> Select
+<span style="color: #008800; font-weight: bold">from</span> <span style="color: #0e84b5; font-weight: bold">webdriver_manager.chrome</span> <span style="color: #008800; font-weight: bold">import</span> ChromeDriverManager
+</pre></div>
+	<div id='para3'><p>What did we import and why? We imported 'os' library to get the download directory, which would be the current working directory in our case. Next, we imported 'time' to make sure no functions overlap and we wait until the necessary data loads. No hurry! Next, we import 'pandas' to read the CSV file which we will download! Next, we import necessary functions from selenium for all the steps.</p></div>
+
+	<div id='para'><p>Imports <i class="material-icons">done_all</i><br>Moving on, we define a function which would use selenium to open the nse web page, after which it would input the selected symbol and expiry date to get the data.</p></div>
+
+	<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">def</span> <span style="color: #0066BB; font-weight: bold">GetNSEOptionChain</span>(symbol<span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;ACC&#39;</span>, expiry<span style="color: #333333">=</span><span style="background-color: #fff0f0">&#39;29-Jul-2021&#39;</span>):
+    chrome_options <span style="color: #333333">=</span> webdriver<span style="color: #333333">.</span>ChromeOptions()
+    chrome_options<span style="color: #333333">.</span>add_argument(<span style="background-color: #fff0f0">&#39;--window-size=1036, 674&#39;</span>)  
+    chrome_options<span style="color: #333333">.</span>add_argument(<span style="background-color: #fff0f0">&#39;--disable-blink-features=AutomationControlled&#39;</span>)
+    prefs <span style="color: #333333">=</span> {<span style="background-color: #fff0f0">&quot;download.default_directory&quot;</span> : os<span style="color: #333333">.</span>getcwd()}
+    chrome_options<span style="color: #333333">.</span>add_experimental_option(<span style="background-color: #fff0f0">&quot;prefs&quot;</span>,prefs)
+    <span style="color: #888888"># chrome_options.add_argument(&#39;--headless&#39;)</span>
+    browser <span style="color: #333333">=</span> webdriver<span style="color: #333333">.</span>Chrome(executable_path<span style="color: #333333">=</span>ChromeDriverManager()<span style="color: #333333">.</span>install(), options<span style="color: #333333">=</span>chrome_options)
+    browser<span style="color: #333333">.</span>get(<span style="background-color: #fff0f0">&#39;https://www.nseindia.com/option-chain&#39;</span>)
+    time<span style="color: #333333">.</span>sleep(<span style="color: #0000DD; font-weight: bold">5</span>)
+</pre></div>
+
+	<div id='para3'><p>First, we set the parameters for our web driver object. We open the NSE link and then wait for 5 seconds for it to load entirely. We have defaulted the value of symbol and expiry date also,</p></div>
+
+	<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888"># check if the passed symbol is okay to be used</span>
+    <span style="color: #008800; font-weight: bold">while</span> <span style="color: #008800; font-weight: bold">True</span>:
+        <span style="color: #008800; font-weight: bold">try</span>:
+            symbol <span style="color: #333333">=</span> symbol<span style="color: #333333">.</span>upper()
+            select <span style="color: #333333">=</span> Select(browser<span style="color: #333333">.</span>find_element_by_id(<span style="background-color: #fff0f0">&#39;select_symbol&#39;</span>))
+            select<span style="color: #333333">.</span>select_by_value(symbol)
+            time<span style="color: #333333">.</span>sleep(<span style="color: #0000DD; font-weight: bold">5</span>)
+            <span style="color: #008800; font-weight: bold">break</span>
+        <span style="color: #008800; font-weight: bold">except</span>:
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&#39;Sorry it seems you have entered a wrong symbol&#39;</span>)
+            symbol <span style="color: #333333">=</span> <span style="color: #007020">input</span>(<span style="background-color: #fff0f0">&#39;Enter symbol please : &#39;</span>)
+    
+    <span style="color: #888888"># check if expiry date is okay</span>
+    <span style="color: #008800; font-weight: bold">while</span> <span style="color: #008800; font-weight: bold">True</span>:
+        <span style="color: #008800; font-weight: bold">try</span>:
+            select <span style="color: #333333">=</span> Select(browser<span style="color: #333333">.</span>find_element_by_id(<span style="background-color: #fff0f0">&#39;expirySelect&#39;</span>))
+            select<span style="color: #333333">.</span>select_by_value(expiry)
+            time<span style="color: #333333">.</span>sleep(<span style="color: #0000DD; font-weight: bold">5</span>)
+            <span style="color: #008800; font-weight: bold">break</span>
+        <span style="color: #008800; font-weight: bold">except</span>:
+            <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&#39;It seems the date you entered is wrong&#39;</span>)
+            expiry <span style="color: #333333">=</span> <span style="color: #007020">input</span>(<span style="background-color: #fff0f0">&#39;Enter expiry please : &#39;</span>)
+</pre></div>
+		<div id='para3'><p>Here, we check if the entered symbol is in the dropdown or not. We also check if the expiry date is valid or not. Keep in mind, this code is still a part of the function 'GetNSEOptionChain'.</div>
+
+		<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #888888"># download the csv file</span>
+    <span style="color: #008800; font-weight: bold">try</span>:
+        down <span style="color: #333333">=</span> browser<span style="color: #333333">.</span>find_element_by_id(<span style="background-color: #fff0f0">&#39;downloadOCTable&#39;</span>)<span style="color: #333333">.</span>click()
+        time<span style="color: #333333">.</span>sleep(<span style="color: #0000DD; font-weight: bold">5</span>)
+    <span style="color: #008800; font-weight: bold">except</span>:
+        <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&#39;The table seems empty so the csv file isnt available&#39;</span>)
+    
+    browser<span style="color: #333333">.</span>close()
+    
+    <span style="color: #888888"># reading the csv file</span>
+    <span style="color: #008800; font-weight: bold">try</span>:
+        filename <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;option-chain-ED-&#39;</span> <span style="color: #333333">+</span> symbol <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&#39;-&#39;</span> <span style="color: #333333">+</span> expiry <span style="color: #333333">+</span> <span style="background-color: #fff0f0">&#39;.csv&#39;</span>
+        data <span style="color: #333333">=</span> pd<span style="color: #333333">.</span>read_csv(filename, header<span style="color: #333333">=</span>[<span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">1</span>])
+    <span style="color: #008800; font-weight: bold">except</span>:
+        <span style="color: #008800; font-weight: bold">pass</span>
+    
+    <span style="color: #008800; font-weight: bold">return</span> data
+</pre></div>
+
+		<div id="para3"><p>Now, we find the button for downloading the csv and click on it and download it to the current working directory, after which we read the CSV file</p></div>
+
+		<div id='para'><p>Now all that remains is calling the function appropriately, and this is how we do it</p></div>
+
+			<!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">if</span> __name__ <span style="color: #333333">==</span> <span style="background-color: #fff0f0">&#39;__main__&#39;</span>:
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&quot;Data scraper from NSE India&quot;</span>)
+    symbol <span style="color: #333333">=</span> <span style="color: #007020">input</span>(<span style="background-color: #fff0f0">&#39;Enter symbol please : &#39;</span>)
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&#39;Expiry must be of the format(DD-MMM-YYYY)&#39;</span>)
+    <span style="color: #007020">print</span>(<span style="background-color: #fff0f0">&#39;Ex: 29-Jul-2021&#39;</span>)
+    expiry <span style="color: #333333">=</span> <span style="color: #007020">input</span>(<span style="background-color: #fff0f0">&#39;Enter expiry please : &#39;</span>)
+    nse_data <span style="color: #333333">=</span> GetNSEOptionChain(symbol, expiry)
+    <span style="color: #007020">print</span>(nse_data)
+</pre></div>
+
+		<div id="para2"><p>And, that's all you have to do! With a few changes you can accomodate this code to work with various other setups!<br>Hope this helped you! Feel free to comment below for any doubts/queries!</p></div>
+
+</body>
+</html>
